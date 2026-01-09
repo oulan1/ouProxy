@@ -12,7 +12,6 @@
         :root {
             --purple: #a855f7;
             --green: #4ade80;
-            --yellow: #fbbf24;
         }
 
         * {
@@ -20,8 +19,7 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            -webkit-user-select: none;
+            user-select: none; /* Запрет выделения */
         }
 
         body, html {
@@ -29,13 +27,10 @@
             height: 100%;
             overflow: hidden;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            color: white;
             background: linear-gradient(135deg, #050505, #1a0b2e, #2d0a4e, #0a0a0a, #3b0764);
             background-size: 400% 400%;
             animation: moveGradient 8s ease infinite;
+            color: white;
         }
 
         @keyframes moveGradient {
@@ -44,23 +39,27 @@
             100% { background-position: 0% 50%; }
         }
 
-        .main-wrapper {
+        .app-container {
             width: 100%;
             max-width: 420px;
             height: 100%;
-            padding: 20px;
+            margin: 0 auto;
+            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
         /* Логотип */
-        .logo-box {
-            margin-top: 10px;
-            margin-bottom: 30px;
+        .header-section {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
             flex-shrink: 0;
-            transition: all 0.5s ease;
         }
 
         .subtitle {
@@ -69,61 +68,68 @@
             margin-top: 5px;
             letter-spacing: 1px;
             text-transform: lowercase;
-            text-align: center;
         }
 
-        /* Управление экранами */
-        .view-section {
+        /* Область контента */
+        .content-area {
             width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Страницы */
+        .page {
             position: absolute;
-            top: 280px; /* Отступ от верха, чтобы не наезжать на лого */
+            top: 0;
             left: 0;
-            padding: 0 20px 40px 20px;
-            bottom: 0;
-        }
-
-        /* Скрытый экран */
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.95);
-            z-index: -1;
-            display: none !important; /* Важно для переключения */
-        }
-
-        .visible {
-            opacity: 1;
-            pointer-events: all;
-            transform: scale(1);
-            z-index: 10;
-            display: flex !important;
-        }
-
-        /* Список серверов с прокруткой для экрана "Все прокси" */
-        .scrollable-list {
-            overflow-y: auto;
-            padding-bottom: 50px;
+            width: 100%;
+            height: 100%;
+            padding: 10px 20px 40px 20px;
             display: flex;
             flex-direction: column;
             gap: 25px;
-            /* Скрываем скроллбар */
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
-        }
-        .scrollable-list::-webkit-scrollbar { 
-            display: none; 
+            transition: transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.4s ease;
+            opacity: 0;
+            transform: translateX(50px);
+            pointer-events: none;
         }
 
-        /* Элементы интерфейса */
+        .page.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        .page.slide-left {
+            transform: translateX(-50px);
+            opacity: 0;
+        }
+
+        .page.slide-right {
+            transform: translateX(50px);
+            opacity: 0;
+        }
+
+        /* Сетка для доп. прокси */
+        .scroll-grid {
+            overflow-y: auto;
+            padding-bottom: 80px; /* Отступ снизу для скролла */
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 колонки */
+            gap: 15px;
+            align-content: start;
+            scrollbar-width: none; 
+        }
+        .scroll-grid::-webkit-scrollbar { display: none; }
+
+        /* Элементы UI */
         .info-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            padding: 0 10px 10px 10px;
+            padding: 0 10px 8px 10px;
         }
 
         .server-name {
@@ -134,12 +140,6 @@
         .server-name a {
             color: var(--purple);
             text-decoration: none;
-        }
-
-        .status-group {
-            display: flex;
-            align-items: center;
-            gap: 12px;
         }
 
         .signal-bars {
@@ -160,14 +160,10 @@
         .bar:nth-child(4) { height: 85%; }
         .bar:nth-child(5) { height: 100%; }
 
-        .c-purple { color: var(--purple); }
-        .c-purple .active { background: var(--purple); box-shadow: 0 0 10px var(--purple); }
-        .c-green { color: var(--green); }
-        .c-green .active { background: var(--green); box-shadow: 0 0 10px var(--green); }
-        .c-yellow { color: var(--yellow); }
-        .c-yellow .active { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+        .c-purple .active { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+        .c-green .active { background: var(--green); box-shadow: 0 0 8px var(--green); }
 
-        /* Кнопка Жидкое Стекло */
+        /* Кнопка Liquid Glass */
         .btn-glass {
             width: 100%;
             padding: 20px;
@@ -184,39 +180,43 @@
             cursor: pointer;
             transition: all 0.3s;
             
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow: 
-                0 15px 35px rgba(0,0,0,0.5),
-                inset 0 4px 4px rgba(255,255,255,0.3),
-                inset 0 -4px 6px rgba(0,0,0,0.4),
-                inset 4px 0 6px rgba(255,255,255,0.1),
-                0 0 0 1px rgba(255,255,255,0.1);
+                0 10px 25px rgba(0,0,0,0.4),
+                inset 0 2px 3px rgba(255,255,255,0.3),
+                inset 0 -2px 4px rgba(0,0,0,0.4),
+                0 0 0 1px rgba(255,255,255,0.08);
         }
 
         .btn-glass:hover {
-            transform: scale(1.02) translateY(-3px);
-            box-shadow: 0 20px 45px rgba(168, 85, 247, 0.3), inset 0 4px 8px rgba(255,255,255,0.5);
+            transform: scale(1.02) translateY(-2px);
+            background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 100%);
+            box-shadow: 0 15px 35px rgba(168, 85, 247, 0.25), inset 0 3px 6px rgba(255,255,255,0.4);
         }
         
-        .btn-glass:active { transform: scale(0.98); }
+        .btn-glass:active { transform: scale(0.96); }
 
-        .btn-glass::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-25deg); transition: 0.8s;
+        /* Кнопки в сетке */
+        .grid-item-btn {
+            padding: 25px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            min-height: 110px;
         }
-        .btn-glass:hover::before { left: 150%; }
 
-        /* Кнопка НАЗАД */
-        .back-btn-container {
+        /* Кнопка Назад */
+        .back-container {
             width: 100%;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
+            flex-shrink: 0;
         }
-        
         .btn-back {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05);
             font-size: 14px;
             padding: 12px;
         }
@@ -225,135 +225,124 @@
 </head>
 <body oncontextmenu="return false;">
 
-    <div class="main-wrapper">
-        <div class="logo-box">
-            <svg width="220" height="220" viewBox="0 0 240 240">
+    <div class="app-container">
+        <div class="header-section">
+            <svg width="200" height="200" viewBox="0 0 240 240">
                 <path d="M54,118.8 L174.6,71.4 C180.1,69.3 185,72.7 183.2,81.1 L162.7,177.6 C161.2,184.4 157.1,186.1 151.4,182.9 L120.2,159.9 L105.1,174.4 C103.5,176.1 102.1,177.5 98.9,177.5 L101.1,146.1 L158.2,94.5 C160.7,92.3 157.6,91.1 154.3,93.3 L83.8,137.7 L53.3,128.1 C46.7,126 46.5,121.4 54,118.8 Z" fill="white"/>
             </svg>
             <div class="subtitle">поможет даже при блокировке</div>
         </div>
 
-        <div id="main-view" class="view-section visible">
+        <div class="content-area">
             
-            <div class="server-item">
-                <div class="info-header">
-                    <div class="server-name">MTProto от Telega</div>
-                    <div class="status-group c-purple">
-                        <div class="ping-display" id="ping1"></div>
-                        <div class="signal-bars">
+            <div id="page-main" class="page active">
+                
+                <div class="server-item">
+                    <div class="info-header">
+                        <div class="server-name">proxy от Telega</div>
+                        <div class="signal-bars c-purple">
                             <div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div>
                         </div>
                     </div>
+                    <a href="tg://proxy?server=185.130.115.156&port=443&secret=dd6b3fb02424dbac55fef2da67c8c949" class="btn-glass">Подключить</a>
                 </div>
-                <a href="tg://proxy?server=185.130.115.156&port=443&secret=dd6b3fb02424dbac55fef2da67c8c949" class="btn-glass">Подключить</a>
-            </div>
 
-            <div class="server-item">
-                <div class="info-header">
-                    <div class="server-name">MTProto 🇳🇱 от <a href="https://t.me/oulanGift">oulanGift</a></div>
-                    <div class="status-group c-green">
-                        <div class="ping-display" id="ping2"></div>
-                        <div class="signal-bars">
+                <div class="server-item">
+                    <div class="info-header">
+                        <div class="server-name">MTProto 🇳🇱 от <a href="https://t.me/oulanGift">oulanGift</a></div>
+                        <div class="signal-bars c-green">
                             <div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar"></div>
                         </div>
                     </div>
+                    <a href="https://t.me/proxy?server=45.81.35.120&port=443&secret=34bea56aa827b78652b0ef8c855aba12" class="btn-glass">Подключить</a>
                 </div>
-                <a href="https://t.me/proxy?server=45.81.35.120&port=443&secret=34bea56aa827b78652b0ef8c855aba12" class="btn-glass">Подключить</a>
+
+                <div class="server-item" style="margin-top: auto;">
+                    <div class="btn-glass" onclick="goToExtra()">Все поддерживаемые прокси</div>
+                </div>
+
             </div>
 
-            <div class="server-item">
-                <div class="info-header">
-                    <div class="server-name">Дополнительные сервера</div>
+            <div id="page-list" class="page slide-right">
+                
+                <div class="back-container">
+                    <div class="btn-glass btn-back" onclick="goToMain()">← Назад</div>
                 </div>
-                <div class="btn-glass" onclick="switchView('list')">Все поддерживаемые прокси</div>
+
+                <div class="scroll-grid" id="grid-container">
+                    </div>
+
             </div>
 
         </div>
-
-        <div id="list-view" class="view-section hidden">
-            
-            <div class="back-btn-container">
-                <div class="btn-glass btn-back" onclick="switchView('main')">← Вернуться назад</div>
-            </div>
-
-            <div class="scrollable-list" id="extra-list">
-                </div>
-
-        </div>
-
     </div>
 
     <script>
-        // Массив дополнительных ссылок
-        const extraProxies = [
-            "tg://proxy?server=14.102.10.36&port=888&secret=eeNEgYdJvXrFGRMCIMJdCQ",
-            "https://t.me/proxy?server=152.232.8.202&port=155&secret=EERighJJvXrFGRMCIMJdCQ",
-            "https://t.me/proxy?server=interfaces-eth1-eth0-allow.firewall.ufw.iptables.mikrotik.sfp.all-rules.allowed.allow-icmp.popular-firewalls.co.uk.&port=3443&secret=7gggggggggggggggggggggh0cmFuc2xhdGUuZ29v",
-            "https://t.me/proxy?server=sgp1.mtproxy.link-host.net&port=7777&secret=144d53ba8a3ddac3b643372425b712bc",
-            "https://t.me/proxy?server=37.27.187.127&port=443&secret=ee5lrPbFdb1vizwd3HEHowtY2RueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "https://t.me/proxy?server=184.174.98.151&port=2040&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            "https://t.me/proxy?server=108.181.123.105&port=9443&secret=eeNEgYdJvXrFGRMCIMJdCQ"
+        // База данных прокси: ID жестко привязан к ссылке
+        const proxiesData = [
+            { id: 1, url: "tg://proxy?server=14.102.10.36&port=888&secret=eeNEgYdJvXrFGRMCIMJdCQ" },
+            { id: 2, url: "https://t.me/proxy?server=152.232.8.202&port=155&secret=EERighJJvXrFGRMCIMJdCQ" },
+            { id: 3, url: "https://t.me/proxy?server=interfaces-eth1-eth0-allow.firewall.ufw.iptables.mikrotik.sfp.all-rules.allowed.allow-icmp.popular-firewalls.co.uk.&port=3443&secret=7gggggggggggggggggggggh0cmFuc2xhdGUuZ29v" },
+            { id: 4, url: "https://t.me/proxy?server=sgp1.mtproxy.link-host.net&port=7777&secret=144d53ba8a3ddac3b643372425b712bc" },
+            { id: 5, url: "https://t.me/proxy?server=37.27.187.127&port=443&secret=ee5lrPbFdb1vizwd3HEHowtY2RueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" },
+            { id: 6, url: "https://t.me/proxy?server=184.174.98.151&port=2040&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" },
+            { id: 7, url: "https://t.me/proxy?server=108.181.123.105&port=9443&secret=eeNEgYdJvXrFGRMCIMJdCQ" },
+            { id: 8, url: "https://t.me/proxy?server=14.102.10.55&port=8443&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" }
         ];
 
-        // Функция генерации HTML для доп. списка
-        function renderExtraProxies() {
-            const container = document.getElementById('extra-list');
-            extraProxies.forEach((url, index) => {
-                const div = document.createElement('div');
-                div.className = 'server-item';
-                div.innerHTML = `
-                    <div class="info-header">
-                        <div class="server-name">Proxy #${index + 1}</div>
-                        <div class="status-group c-yellow">
-                            <div class="ping-display ping-dynamic">-- ms</div>
-                            <div class="signal-bars">
-                                <div class="bar active"></div>
-                                <div class="bar active"></div>
-                                <div class="bar active"></div>
-                                <div class="bar"></div>
-                                <div class="bar"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="${url}" class="btn-glass">Подключить</a>
-                `;
-                container.appendChild(div);
+        // Функция перемешивания (Fisher-Yates)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Рендер сетки
+        function renderGrid() {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+            
+            // 1. Создаем копию массива объектов
+            // 2. Перемешиваем объекты местами
+            const shuffled = shuffleArray([...proxiesData]);
+
+            shuffled.forEach(item => {
+                // Создаем кнопку. item.id всегда соответствует item.url
+                const link = document.createElement('a');
+                link.href = item.url;
+                link.className = 'btn-glass grid-item-btn';
+                // Внутри пишем ID из объекта, а не порядковый номер
+                link.innerHTML = `<div>Proxy</div><div style="font-size: 24px; color: var(--purple); margin-top: 5px;">#${item.id}</div>`;
+                
+                container.appendChild(link);
             });
         }
 
-        // Логика переключения экранов
-        function switchView(viewName) {
-            const main = document.getElementById('main-view');
-            const list = document.getElementById('list-view');
-            
-            if (viewName === 'list') {
-                main.classList.remove('visible');
-                main.classList.add('hidden');
-                setTimeout(() => {
-                    list.classList.remove('hidden');
-                    list.classList.add('visible');
-                }, 100); // Небольшая задержка для плавности
-            } else {
-                list.classList.remove('visible');
-                list.classList.add('hidden');
-                setTimeout(() => {
-                    main.classList.remove('hidden');
-                    main.classList.add('visible');
-                }, 100);
-            }
+        // Анимация переходов
+        function goToExtra() {
+            const pMain = document.getElementById('page-main');
+            const pList = document.getElementById('page-list');
+            pMain.classList.remove('active');
+            pMain.classList.add('slide-left');
+            pList.classList.remove('slide-right');
+            pList.classList.add('active');
         }
 
-        // Рандомайзер
-        function rnd(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
+        function goToMain() {
+            const pMain = document.getElementById('page-main');
+            const pList = document.getElementById('page-list');
+            pList.classList.remove('active');
+            pList.classList.add('slide-right');
+            pMain.classList.remove('slide-left');
+            pMain.classList.add('active');
         }
 
-        // Инициализация
-        renderExtraProxies();
-        updatePings();
-        setInterval(updatePings, 3000);
+        // Запуск
+        renderGrid();
 
-        // Блокировка защиты
+        // Защита от выделения
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'i' || e.key === 's')) e.preventDefault();
