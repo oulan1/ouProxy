@@ -19,7 +19,7 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            user-select: none; /* Запрет выделения */
+            user-select: none;
         }
 
         body, html {
@@ -50,7 +50,6 @@
             align-items: center;
         }
 
-        /* Логотип */
         .header-section {
             padding-top: 20px;
             padding-bottom: 20px;
@@ -70,7 +69,6 @@
             text-transform: lowercase;
         }
 
-        /* Область контента */
         .content-area {
             width: 100%;
             flex: 1;
@@ -78,7 +76,6 @@
             overflow: hidden;
         }
 
-        /* Страницы */
         .page {
             position: absolute;
             top: 0;
@@ -102,29 +99,20 @@
             z-index: 10;
         }
 
-        .page.slide-left {
-            transform: translateX(-50px);
-            opacity: 0;
-        }
+        .page.slide-left { transform: translateX(-50px); opacity: 0; }
+        .page.slide-right { transform: translateX(50px); opacity: 0; }
 
-        .page.slide-right {
-            transform: translateX(50px);
-            opacity: 0;
-        }
-
-        /* Сетка для доп. прокси */
         .scroll-grid {
             overflow-y: auto;
-            padding-bottom: 80px; /* Отступ снизу для скролла */
+            padding-bottom: 80px;
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 колонки */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
             align-content: start;
             scrollbar-width: none; 
         }
         .scroll-grid::-webkit-scrollbar { display: none; }
 
-        /* Элементы UI */
         .info-header {
             display: flex;
             justify-content: space-between;
@@ -132,28 +120,11 @@
             padding: 0 10px 8px 10px;
         }
 
-        .server-name {
-            font-size: 15px;
-            font-weight: 600;
-        }
+        .server-name { font-size: 15px; font-weight: 600; }
+        .server-name a { color: var(--purple); text-decoration: none; }
 
-        .server-name a {
-            color: var(--purple);
-            text-decoration: none;
-        }
-
-        .signal-bars {
-            display: flex;
-            align-items: flex-end;
-            gap: 3px;
-            height: 16px;
-        }
-
-        .bar {
-            width: 4px;
-            border-radius: 2px;
-            background: rgba(255, 255, 255, 0.1);
-        }
+        .signal-bars { display: flex; align-items: flex-end; gap: 3px; height: 16px; }
+        .bar { width: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); }
         .bar:nth-child(1) { height: 25%; }
         .bar:nth-child(2) { height: 45%; }
         .bar:nth-child(3) { height: 65%; }
@@ -163,7 +134,6 @@
         .c-purple .active { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
         .c-green .active { background: var(--green); box-shadow: 0 0 8px var(--green); }
 
-        /* Кнопка Liquid Glass */
         .btn-glass {
             width: 100%;
             padding: 20px;
@@ -179,26 +149,19 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            
             background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.02) 100%);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            box-shadow: 
-                0 10px 25px rgba(0,0,0,0.4),
-                inset 0 2px 3px rgba(255,255,255,0.3),
-                inset 0 -2px 4px rgba(0,0,0,0.4),
-                0 0 0 1px rgba(255,255,255,0.08);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4), inset 0 2px 3px rgba(255,255,255,0.3), inset 0 -2px 4px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
         }
 
         .btn-glass:hover {
             transform: scale(1.02) translateY(-2px);
-            background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 100%);
             box-shadow: 0 15px 35px rgba(168, 85, 247, 0.25), inset 0 3px 6px rgba(255,255,255,0.4);
         }
         
         .btn-glass:active { transform: scale(0.96); }
 
-        /* Кнопки в сетке */
         .grid-item-btn {
             padding: 25px 10px;
             display: flex;
@@ -209,17 +172,8 @@
             min-height: 110px;
         }
 
-        /* Кнопка Назад */
-        .back-container {
-            width: 100%;
-            margin-bottom: 5px;
-            flex-shrink: 0;
-        }
-        .btn-back {
-            background: rgba(255, 255, 255, 0.05);
-            font-size: 14px;
-            padding: 12px;
-        }
+        .back-container { width: 100%; margin-bottom: 5px; flex-shrink: 0; }
+        .btn-back { background: rgba(255, 255, 255, 0.05); font-size: 14px; padding: 12px; }
 
     </style>
 </head>
@@ -239,8 +193,7 @@
                 
                 <div class="server-item">
                     <div class="info-header">
-                        <div class="server-name">proxy от Telega</div>
-                        <div class="signal-bars c-purple">
+                        <div class="server-name">MTProto от Telega</div> <div class="signal-bars c-purple">
                             <div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div>
                         </div>
                     </div>
@@ -264,21 +217,16 @@
             </div>
 
             <div id="page-list" class="page slide-right">
-                
                 <div class="back-container">
                     <div class="btn-glass btn-back" onclick="goToMain()">← Назад</div>
                 </div>
-
-                <div class="scroll-grid" id="grid-container">
-                    </div>
-
+                <div class="scroll-grid" id="grid-container"></div>
             </div>
 
         </div>
     </div>
 
     <script>
-        // База данных прокси: ID жестко привязан к ссылке
         const proxiesData = [
             { id: 1, url: "tg://proxy?server=14.102.10.36&port=888&secret=eeNEgYdJvXrFGRMCIMJdCQ" },
             { id: 2, url: "https://t.me/proxy?server=152.232.8.202&port=155&secret=EERighJJvXrFGRMCIMJdCQ" },
@@ -290,7 +238,6 @@
             { id: 8, url: "https://t.me/proxy?server=14.102.10.55&port=8443&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" }
         ];
 
-        // Функция перемешивания (Fisher-Yates)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -299,29 +246,21 @@
             return array;
         }
 
-        // Рендер сетки
         function renderGrid() {
             const container = document.getElementById('grid-container');
             container.innerHTML = '';
-            
-            // 1. Создаем копию массива объектов
-            // 2. Перемешиваем объекты местами
             const shuffled = shuffleArray([...proxiesData]);
-
             shuffled.forEach(item => {
-                // Создаем кнопку. item.id всегда соответствует item.url
                 const link = document.createElement('a');
                 link.href = item.url;
                 link.className = 'btn-glass grid-item-btn';
-                // Внутри пишем ID из объекта, а не порядковый номер
                 link.innerHTML = `<div>Proxy</div><div style="font-size: 24px; color: var(--purple); margin-top: 5px;">#${item.id}</div>`;
-                
                 container.appendChild(link);
             });
         }
 
-        // Анимация переходов
         function goToExtra() {
+            renderGrid(); // Перемешиваем КАЖДЫЙ РАЗ при нажатии на кнопку
             const pMain = document.getElementById('page-main');
             const pList = document.getElementById('page-list');
             pMain.classList.remove('active');
@@ -339,10 +278,6 @@
             pMain.classList.add('active');
         }
 
-        // Запуск
-        renderGrid();
-
-        // Защита от выделения
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'i' || e.key === 's')) e.preventDefault();
