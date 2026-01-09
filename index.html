@@ -97,14 +97,6 @@
             gap: 12px;
         }
 
-        .ping-display {
-            font-family: monospace;
-            font-size: 13px;
-            font-weight: bold;
-            min-width: 45px;
-            text-align: right;
-        }
-
         .signal-bars {
             display: flex;
             align-items: flex-end;
@@ -269,29 +261,6 @@
     </div>
 
     <script>
-        // Функция для случайного числа в диапазоне
-        function rnd(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        function updatePings() {
-            // Логика Server 1
-            const p1 = document.getElementById('ping1');
-            let chance = Math.random();
-            if (chance < 0.5) p1.innerText = rnd(6, 11) + ' ms';
-            else if (chance < 0.8) p1.innerText = rnd(12, 38) + ' ms';
-            else p1.innerText = rnd(39, 99) + ' ms';
-
-            // Логика Server 2
-            document.getElementById('ping2').innerText = rnd(110, 142) + ' ms';
-
-            // Логика Server 3
-            document.getElementById('ping3').innerText = rnd(400, 800) + ' ms';
-        }
-
-        // Запуск обновления пинга каждые 3 сек
-        updatePings();
-        setInterval(updatePings, 3000);
 
         // Блокировка стандартных действий
         document.addEventListener('contextmenu', e => e.preventDefault());
