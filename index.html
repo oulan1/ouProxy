@@ -125,14 +125,8 @@
 
         .signal-bars { display: flex; align-items: flex-end; gap: 3px; height: 16px; }
         .bar { width: 4px; border-radius: 2px; background: rgba(255, 255, 255, 0.1); }
-        .bar:nth-child(1) { height: 25%; }
-        .bar:nth-child(2) { height: 45%; }
-        .bar:nth-child(3) { height: 65%; }
-        .bar:nth-child(4) { height: 85%; }
-        .bar:nth-child(5) { height: 100%; }
-
-        .c-purple .active { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
-        .c-green .active { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .bar.active { background: var(--purple); box-shadow: 0 0 8px var(--purple); }
+        .c-green .bar.active { background: var(--green); box-shadow: 0 0 8px var(--green); }
 
         .btn-glass {
             width: 100%;
@@ -188,12 +182,11 @@
         </div>
 
         <div class="content-area">
-            
             <div id="page-main" class="page active">
-                
                 <div class="server-item">
                     <div class="info-header">
-                        <div class="server-name">MTProto от Telega</div> <div class="signal-bars c-purple">
+                        <div class="server-name">MTProto от Telega</div>
+                        <div class="signal-bars">
                             <div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div><div class="bar active"></div>
                         </div>
                     </div>
@@ -213,7 +206,6 @@
                 <div class="server-item" style="margin-top: auto;">
                     <div class="btn-glass" onclick="goToExtra()">Все поддерживаемые прокси</div>
                 </div>
-
             </div>
 
             <div id="page-list" class="page slide-right">
@@ -222,11 +214,27 @@
                 </div>
                 <div class="scroll-grid" id="grid-container"></div>
             </div>
-
         </div>
     </div>
 
     <script>
+        // --- СИСТЕМА ОБНОВЛЕНИЯ ---
+        // Если вы изменили код на GitHub, поменяйте версию ниже (например, на 1.1),
+        // и страница у пользователей обновится сама при заходе.
+        const SITE_VERSION = "1.0"; 
+
+        function checkVersion() {
+            const savedVersion = localStorage.getItem('app_version');
+            if (savedVersion && savedVersion !== SITE_VERSION) {
+                localStorage.setItem('app_version', SITE_VERSION);
+                location.reload(true); // Принудительная перезагрузка
+            } else {
+                localStorage.setItem('app_version', SITE_VERSION);
+            }
+        }
+        checkVersion();
+
+        // База данных прокси
         const proxiesData = [
             { id: 1, url: "tg://proxy?server=14.102.10.36&port=888&secret=eeNEgYdJvXrFGRMCIMJdCQ" },
             { id: 2, url: "https://t.me/proxy?server=152.232.8.202&port=155&secret=EERighJJvXrFGRMCIMJdCQ" },
@@ -235,7 +243,8 @@
             { id: 5, url: "https://t.me/proxy?server=37.27.187.127&port=443&secret=ee5lrPbFdb1vizwd3HEHowtY2RueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" },
             { id: 6, url: "https://t.me/proxy?server=184.174.98.151&port=2040&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" },
             { id: 7, url: "https://t.me/proxy?server=108.181.123.105&port=9443&secret=eeNEgYdJvXrFGRMCIMJdCQ" },
-            { id: 8, url: "https://t.me/proxy?server=14.102.10.55&port=8443&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" }
+            { id: 8, url: "https://t.me/proxy?server=14.102.10.55&port=8443&secret=EERighJJvXrFGRMCIMJdCQRueWVrdGFuZXQuY29tZmFyYWthdi5jb212YW4ubmFqdmEuY29tAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" },
+            { id: 9, url: "https://t.me/proxy?server=192.241.120.5&port=155&secret=EERighJJvXrFGRMCIMJdCQ" }
         ];
 
         function shuffleArray(array) {
@@ -260,28 +269,21 @@
         }
 
         function goToExtra() {
-            renderGrid(); // Перемешиваем КАЖДЫЙ РАЗ при нажатии на кнопку
-            const pMain = document.getElementById('page-main');
-            const pList = document.getElementById('page-list');
-            pMain.classList.remove('active');
-            pMain.classList.add('slide-left');
-            pList.classList.remove('slide-right');
-            pList.classList.add('active');
+            renderGrid();
+            document.getElementById('page-main').classList.remove('active');
+            document.getElementById('page-main').classList.add('slide-left');
+            document.getElementById('page-list').classList.remove('slide-right');
+            document.getElementById('page-list').classList.add('active');
         }
 
         function goToMain() {
-            const pMain = document.getElementById('page-main');
-            const pList = document.getElementById('page-list');
-            pList.classList.remove('active');
-            pList.classList.add('slide-right');
-            pMain.classList.remove('slide-left');
-            pMain.classList.add('active');
+            document.getElementById('page-list').classList.remove('active');
+            document.getElementById('page-list').classList.add('slide-right');
+            document.getElementById('page-main').classList.remove('slide-left');
+            document.getElementById('page-main').classList.add('active');
         }
 
         document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'i' || e.key === 's')) e.preventDefault();
-        });
     </script>
 </body>
 </html>
