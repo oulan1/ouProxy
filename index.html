@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Telega Proxy Elite</title>
+    <style>
+        :root {
+            --purple: #a855f7;
+            --green: #4ade80;
+            --yellow: #fbbf24;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Поднимаем контент выше */
+            color: white;
+            /* Динамичный градиент */
+            background: linear-gradient(135deg, #050505, #1a0b2e, #2d0a4e, #0a0a0a, #3b0764);
+            background-size: 400% 400%;
+            animation: moveGradient 8s ease infinite;
+        }
+
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 2;
+        }
+
+        /* Логотип */
+        .logo-box {
+            margin-top: 10px; /* Выше к краю */
+            margin-bottom: 40px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 5px;
+            letter-spacing: 1px;
+            text-transform: lowercase;
+        }
+
+        /* Список серверов */
+        .proxy-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 10px 10px 10px;
+        }
+
+        .server-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .server-name a {
+            color: var(--purple);
+            text-decoration: none;
+        }
+
+        /* Пинг и Полоски */
+        .status-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ping-display {
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .signal-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 16px;
+        }
+
+        .bar {
+            width: 4px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .bar:nth-child(1) { height: 25%; }
+        .bar:nth-child(2) { height: 45%; }
+        .bar:nth-child(3) { height: 65%; }
+        .bar:nth-child(4) { height: 85%; }
+        .bar:nth-child(5) { height: 100%; }
+
+        /* Цвета */
+        .c-purple { color: var(--purple); }
+        .c-purple .active { background: var(--purple); box-shadow: 0 0 10px var(--purple); }
+        
+        .c-green { color: var(--green); }
+        .c-green .active { background: var(--green); box-shadow: 0 0 10px var(--green); }
+        
+        .c-yellow { color: var(--yellow); }
+        .c-yellow .active { background: var(--yellow); box-shadow: 0 0 10px var(--yellow); }
+
+        .note {
+            font-size: 11px;
+            color: #777;
+            margin-top: 3px;
+        }
+
+        /* Кнопка Жидкое Стекло (Объемная) */
+        .btn-glass {
+            width: 100%;
+            padding: 20px;
+            border-radius: 24px;
+            border: none;
+            color: white;
+            font-size: 17px;
+            font-weight: 800;
+            text-decoration: none;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            /* Фон - имитация толщи стекла */
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            /* Сложные тени для объема */
+            box-shadow: 
+                0 15px 35px rgba(0,0,0,0.5),
+                inset 0 4px 4px rgba(255,255,255,0.3),    /* Верхний блик */
+                inset 0 -4px 6px rgba(0,0,0,0.4),        /* Нижняя тень внутри */
+                inset 4px 0 6px rgba(255,255,255,0.1),   /* Боковой блик */
+                0 0 0 1px rgba(255,255,255,0.1);         /* Тонкий контур */
+        }
+
+        .btn-glass:hover {
+            transform: scale(1.03) translateY(-5px);
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.1) 100%);
+            box-shadow: 
+                0 20px 45px rgba(168, 85, 247, 0.3),
+                inset 0 4px 8px rgba(255,255,255,0.5),
+                0 0 0 1px rgba(255,255,255,0.2);
+        }
+
+        .btn-glass:active {
+            transform: scale(0.98);
+        }
+
+        /* Эффект блика */
+        .btn-glass::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-25deg);
+            transition: 0.8s;
+        }
+
+        .btn-glass:hover::before {
+            left: 150%;
+        }
+
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div class="main-wrapper">
+        <div class="logo-box">
+            <svg width="220" height="220" viewBox="0 0 240 240">
+                <path d="M54,118.8 L174.6,71.4 C180.1,69.3 185,72.7 183.2,81.1 L162.7,177.6 C161.2,184.4 157.1,186.1 151.4,182.9 L120.2,159.9 L105.1,174.4 C103.5,176.1 102.1,177.5 98.9,177.5 L101.1,146.1 L158.2,94.5 C160.7,92.3 157.6,91.1 154.3,93.3 L83.8,137.7 L53.3,128.1 C46.7,126 46.5,121.4 54,118.8 Z" fill="white"/>
+            </svg>
+            <div class="subtitle">поможет даже при блокировке</div>
+        </div>
+
+        <div class="proxy-list">
+            <div class="server-item">
+                <div class="info-header">
+                    <div class="server-name">proxy от Telega</div>
+                    <div class="status-group c-purple">
+                        <div class="ping-display" id="ping1">-- ms</div>
+                        <div class="signal-bars">
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                        </div>
+                    </div>
+                </div>
+                <a href="tg://proxy?server=185.130.115.156&port=443&secret=dd6b3fb02424dbac55fef2da67c8c949" class="btn-glass">Подключить</a>
+            </div>
+
+            <div class="server-item">
+                <div class="info-header">
+                    <div class="server-name">MTProto 🇳🇱 от <a href="https://t.me/oulanGift">oulanGift</a></div>
+                    <div class="status-group c-green">
+                        <div class="ping-display" id="ping2">-- ms</div>
+                        <div class="signal-bars">
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://t.me/proxy?server=45.81.35.120&port=443&secret=34bea56aa827b78652b0ef8c855aba12" class="btn-glass">Подключить</a>
+            </div>
+
+            <div class="server-item">
+                <div class="info-header">
+                    <div style="text-align: left;">
+                        <div class="server-name">SOCKS5 🇺🇲 от <a href="https://t.me/oulanGift">oulanGift</a></div>
+                        <div class="note">Дата окончания: 19.01.2026 04:00 MSK</div>
+                    </div>
+                    <div class="status-group c-yellow">
+                        <div class="ping-display" id="ping3">-- ms</div>
+                        <div class="signal-bars">
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar active"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://t.me/socks?server=107.167.27.58&port=59971&user=CBMErJ14&pass=FcDJYVZN" class="btn-glass">Подключить</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Функция для случайного числа в диапазоне
+        function rnd(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function updatePings() {
+            // Логика Server 1
+            const p1 = document.getElementById('ping1');
+            let chance = Math.random();
+            if (chance < 0.5) p1.innerText = rnd(6, 11) + ' ms';
+            else if (chance < 0.8) p1.innerText = rnd(12, 38) + ' ms';
+            else p1.innerText = rnd(39, 99) + ' ms';
+
+            // Логика Server 2
+            document.getElementById('ping2').innerText = rnd(110, 142) + ' ms';
+
+            // Логика Server 3
+            document.getElementById('ping3').innerText = rnd(400, 800) + ' ms';
+        }
+
+        // Запуск обновления пинга каждые 3 сек
+        updatePings();
+        setInterval(updatePings, 3000);
+
+        // Блокировка стандартных действий
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && (e.key === 'c' || e.key === 'u' || e.key === 'i' || e.key === 's')) e.preventDefault();
+        });
+    </script>
+</body>
+</html>
